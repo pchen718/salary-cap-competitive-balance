@@ -1,0 +1,293 @@
+---
+title: "project_code"
+author: "Marshall Roll, Phebe Chen"
+date: "2024-02-27"
+output: html_document
+---
+
+```{r warning = FALSE, message = FALSE}
+library(tidyverse)
+library(ggthemes)
+library(rvest)  
+library(robotstxt)
+library(extrafont)
+library(ggrepel)
+library(dplyr)
+loadfonts(device = "win", quiet = TRUE)
+```
+
+```{r, warning = FALSE}
+# set working directory to source file location
+# load('../data/salary.Rdata')
+# options(scipen = 999)
+```
+
+```{r}
+# combined_data <- rbind(
+#   transform(nfl_salary, League = "NFL"),
+#   transform(nba_salary, League = "NBA"),
+#   transform(nhl_salary, League = "NHL"),
+#   transform(mlb_salary, League = "MLB")
+# )
+# 
+# ggplot(combined_data, aes(x = League, y = aav, fill = League)) +
+#   geom_boxplot() +
+#   labs(title = "Athlete Salaries Across Leagues",
+#        x = "",
+#        y = "Salary (AAV)") +
+#   scale_y_continuous(labels = scales::comma) +
+#   theme_clean() + 
+#   guides(fill = FALSE)
+
+```
+ 
+```{r}
+# combined_data <- combined_data %>% 
+#   mutate(aav_by_roster_size = 
+#            case_when(
+#              League == "NFL" ~ aav/53,
+#              League == "NBA" ~ aav/18,
+#              League == "NHL" ~ aav/23, 
+#              League == "MLB" ~ aav/26
+#            ))
+# 
+# ggplot(combined_data, aes(x = League, y = aav_by_roster_size, fill = League)) +
+#   geom_boxplot() +
+#   labs(title = "Athlete Salaries Across Leagues",
+#        x = "",
+#        y = "Salary (AAV, Standardized by Roster Size)") +
+#   scale_y_continuous(labels = scales::comma) +
+#   theme_clean() + 
+#   guides(fill = FALSE)
+```
+
+```{r}
+ggplot(nhl_dataset, aes(x = PGP, y = Average_total_cap)) + 
+  geom_jitter(color = "blue", size = 1.5, alpha = 0.5) +  
+  geom_smooth(color = "red", linetype = "dashed") +  
+  geom_label_repel(aes(label = TEAM), size = 2, color = "purple", box.padding = 0.2) + 
+  labs(x = "Playoff Games Played (2011-2023)",
+       y = "Average Spending on Salary (2011-2023)") + 
+  scale_y_continuous(labels = scales::comma) +
+  theme_minimal() +
+  theme(  
+    plot.title = element_text(face = "bold", size = 16),
+    axis.title = element_text(face = "bold", size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "none"
+  )
+
+# Plot for NFL
+ggplot(nfl_dataset, aes(x = PGP, y = Average_total_cap)) + 
+  geom_smooth(color = "red", linetype = "dashed") +
+  geom_point(color = "blue", size = 1.5, alpha = 0.5) +
+  geom_label_repel(aes(label = TEAM), size = 2, color = "darkcyan", box.padding = 0.2) + 
+  labs(title = "NFL",
+       x = "Playoff Games Played (2011-2023)",
+       y = "Average Spending on Salary (2011-2023)") + 
+  scale_y_continuous(labels = scales::comma) +
+  theme_minimal() +
+  theme(  
+    plot.title = element_text(face = "bold", size = 16),
+    axis.title = element_text(face = "bold", size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "none"
+  )
+
+ggplot(mlb_dataset, aes(x = PGP, y = Average_total_cap)) + 
+  geom_smooth(color = "red", linetype = "dashed") +
+  geom_point(color = "blue", size = 1.5, alpha = 0.5) +
+  geom_label_repel(aes(label = TEAM), size = 2, color = "salmon", box.padding = 0.2) + 
+  labs(title = "MLB",
+       x = "Playoff Games Played (2011-2023)",
+       y = "Average Spending on Salary (2011-2023)") + 
+  scale_y_continuous(labels = scales::comma) +
+  theme_minimal() +
+  theme(  
+    plot.title = element_text(face = "bold", size = 16),
+    axis.title = element_text(face = "bold", size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "none"
+  )
+
+ggplot(nba_dataset, aes(x = PGP, y = Average_total_cap)) + 
+  geom_smooth(color = "red", linetype = "dashed") +
+  geom_point(color = "blue", size = 1.5, alpha = 0.5) +
+  geom_label_repel(aes(label = TEAM), size = 2, color = "forestgreen", box.padding = 0.2) + 
+  labs(title = "NBA",
+       x = "Playoff Games Played (2011-2023)",
+       y = "Average Spending on Salary (2011-2023)") + 
+  scale_y_continuous(labels = scales::comma) +
+  theme_minimal() +
+  theme(  
+    plot.title = element_text(face = "bold", size = 16),
+    axis.title = element_text(face = "bold", size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "none"
+  )
+```
+ 
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+ggplot(nhl_dataset, aes(x = RSW/RSGP, y = Average_total_cap)) + 
+  geom_jitter(color = "blue", size = 1.5, alpha = 0.5) +  
+  geom_smooth(color = "red", linetype = "dashed") +  
+  geom_label_repel(aes(label = TEAM), size = 2, color = "purple", box.padding = 0.2) + 
+  labs(x = "Regular Season Win Percentage (2011-2023)",
+       y = "Average Spending on Salary (2011-2023)",
+       caption = "Removed Seattle Kraken & Vegas Golden Knights, as they were founded since 2011 and have incomplete data across the range.") + 
+  scale_y_continuous(labels = scales::comma) +
+  theme_minimal() +
+  theme(  
+    plot.title = element_text(face = "bold", size = 16),
+    axis.title = element_text(face = "bold", size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "none"
+  )
+
+# Plot for NFL
+ggplot(nfl_dataset, aes(x = RSW/RSGP, y = Average_total_cap)) + 
+  geom_smooth(color = "red", linetype = "dashed") +
+  geom_point(color = "blue", size = 1.5, alpha = 0.5) +
+  geom_label_repel(aes(label = TEAM), size = 2, color = "darkcyan", box.padding = 0.2) + 
+  labs(title = "NFL",
+       x = "Regular Season Win Percentage (2011-2023)",
+       y = "Average Spending on Salary (2011-2023)") + 
+  scale_y_continuous(labels = scales::comma) +
+  theme_minimal() +
+  theme(  
+    plot.title = element_text(face = "bold", size = 16),
+    axis.title = element_text(face = "bold", size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "none"
+  )
+
+ggplot(mlb_dataset, aes(x = RSW/RSGP, y = Average_total_cap)) + 
+  geom_smooth(color = "red", linetype = "dashed") +
+  geom_point(color = "blue", size = 1.5, alpha = 0.5) +
+  geom_label_repel(aes(label = TEAM), size = 2, color = "salmon", box.padding = 0.2) + 
+  labs(title = "MLB",
+       x = "Regular Season Win Percentage (2011-2023)",
+       y = "Average Spending on Salary (2011-2023)") + 
+  scale_y_continuous(labels = scales::comma) +
+  theme_minimal() +
+  theme(  
+    plot.title = element_text(face = "bold", size = 16),
+    axis.title = element_text(face = "bold", size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "none"
+  )
+
+ggplot(nba_dataset, aes(x = RSW/RSGP, y = Average_total_cap)) + 
+  geom_smooth(color = "red", linetype = "dashed") +
+  geom_point(color = "blue", size = 1.5, alpha = 0.5) +
+  geom_label_repel(aes(label = TEAM), size = 2, color = "forestgreen", box.padding = 0.2) + 
+  labs(title = "NBA",
+       x = "Regular Season Win Percentage (2011-2023)",
+       y = "Average Spending on Salary (2011-2023)") + 
+  scale_y_continuous(labels = scales::comma) +
+  theme_minimal() +
+  theme(  
+    plot.title = element_text(face = "bold", size = 16),
+    axis.title = element_text(face = "bold", size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "none"
+  )
+```
+ 
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Your data and preprocessing
+# Assuming mlb_total_cap, nhl_total_cap, nfl_total_cap, nba_total_cap, and championship_teams are defined
+
+names(mlb_total_cap)[names(mlb_total_cap) == "TotalPayroll"] <- "TotalCap"
+
+mlb_total_cap$league <- "MLB"
+nhl_total_cap$league <- "NHL"
+nfl_total_cap$league <- "NFL"
+nba_total_cap$league <- "NBA"
+
+# Example data preparation
+mlb_total_cap <- mlb_total_cap[, c("Year", "Team", "TotalCap", "league")]
+nhl_total_cap <- nhl_total_cap[, c("Year", "Team", "TotalCap", "league")]
+nfl_total_cap <- nfl_total_cap[, c("Year", "Team", "TotalCap", "league")]
+nba_total_cap <- nba_total_cap[, c("Year", "Team", "TotalCap", "league")]
+
+mlb_cols <- c("Year", "Team", "TotalCap", "league")
+nhl_cols <- c("Year", "Team", "TotalCap", "league")
+nfl_cols <- c("Year", "Team", "TotalCap", "league") 
+nba_cols <- c("Year", "Team", "TotalCap", "league")  
+
+mlb_total_cap <- mlb_total_cap[mlb_cols]
+nhl_total_cap <- nhl_total_cap[nhl_cols]
+nfl_total_cap <- nfl_total_cap[nfl_cols]
+nba_total_cap <- nba_total_cap[nba_cols]
+
+combined_data <- rbind(mlb_total_cap, nhl_total_cap, nfl_total_cap, nba_total_cap)
+
+# Filter data for teams that have won a championship in the last decade
+championship_teams <- c("Golden State Warriors", "Los Angeles Dodgers", "New England Patriots", "Tampa Bay Lightning")  
+
+filtered_data <- combined_data %>%
+  filter(Team %in% championship_teams)
+
+# Plotting
+ggplot(combined_data, aes(x = Year, y = TotalCap, color = league)) +
+  stat_summary(fun = mean, geom = "line", size = 1) +
+  labs(title = "Average team spending vs the best teams",
+       caption = "Data as of 2023, courtesy of StatMuse",
+       x = "Year",
+       y = "Average Salary Cap") +
+  scale_y_continuous(labels = scales::comma) +
+  scale_x_continuous(breaks = seq(min(combined_data$Year), max(combined_data$Year), by = 2)) +
+  theme_minimal() +
+  theme(  
+    plot.title = element_text(face = "bold", size = 16),
+    axis.title = element_text(face = "bold", size = 14),
+    axis.text = element_text(size = 12)) +
+  geom_line(data = filtered_data, aes(x = Year, y = TotalCap, color = league), size = 1, linetype = "dashed", alpha = 0.5) +
+  geom_text(data = filtered_data %>% group_by(Team) %>% filter(Year == max(Year)),
+            aes(label = Team, x = Year, y = TotalCap),
+            hjust = -0.2,
+            vjust = 0.5,
+            size = 2) + 
+  expand_limits(x = c(min(combined_data$Year), max(combined_data$Year) + 3)) + 
+  scale_color_manual(values = c("NHL" = "blue", "NBA" = "red", "MLB" = "darkgreen", "NFL" = "purple"),
+                     labels = c("NHL Average", "NBA Average", "MLB Average", "NFL Average")) +
+  guides(color = guide_legend(title = "Legend"))  # You can rename the legend title if you wish
+```
+
+```{r}
+championship_teams <- c("Buffalo Sabres", "New York Jets", "Miami Marlins", "Detroit Pistons")  
+
+filtered_data <- combined_data %>%
+  filter(Team %in% championship_teams)
+
+ggplot(combined_data, aes(x = Year, y = TotalCap, color = league)) +
+  stat_summary(fun = mean, geom = "line", size = 1) +
+  labs(title = "Average team spending vs the worst teams",
+       caption = "Data as of 2023, courtesy of StatMuse",
+       x = "Year",
+       y = "Average Salary Cap",
+       color = "Legend") +
+  scale_y_continuous(labels = scales::comma) +
+  scale_x_continuous(breaks = seq(min(combined_data$Year), max(combined_data$Year), by = 2)) +
+  theme_minimal() +
+  theme(  
+    plot.title = element_text(face = "bold", size = 16),
+    axis.title = element_text(face = "bold", size = 14),
+    axis.text = element_text(size = 12)) +
+  geom_line(data = filtered_data, aes(x = Year, y = TotalCap, color = league), size = 1, linetype = "dashed", alpha = 0.5) +
+  geom_text(data = filtered_data %>% group_by(Team) %>% filter(Year == max(Year)),
+            aes(label = Team, x = Year, y = TotalCap),
+            hjust = -0.2,
+            vjust = 0.5,
+            size = 2) + 
+  expand_limits(x = c(min(combined_data$Year), max(combined_data$Year) + 3)) + 
+  scale_color_manual(values = c("NHL" = "blue", "NBA" = "red", "MLB" = "darkgreen", "NFL" = "purple"),
+                     labels = c("NHL Average", "NBA Average", "MLB Average", "NFL Average")) +
+  guides(color = guide_legend(title = "Legend"))
+
+```
+ 
