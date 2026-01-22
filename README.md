@@ -12,4 +12,4 @@ This project analyzes whether salary caps improve competitive balance in profess
 The full analysis is presented as a written blog-style report.
 
 **Read the paper:**  
-[Salary Caps: Are They Effective?](./Blog%20Post.html)
+[Salary Caps: Are They Effective?](BlogPost.pdf)
