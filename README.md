@@ -8,8 +8,9 @@ This project analyzes whether salary caps improve competitive balance in profess
 - Competitive balance metrics (variance, dispersion measures)
 - Historical comparison before and after salary cap implementation
 
-## Project Output
-The full analysis is presented as a written blog-style report.
+## Code
+This repository includes the R scripts and R Markdown file used to clean the data,
+compute competitive balance metrics, and generate the analysis.
 
 **Read the paper:**  
 [Salary Caps: Are They Effective?](BlogPost.pdf)
